@@ -87,23 +87,28 @@ class HrPayslip(models.Model):
 
     @api.constrains('date_from', 'date_to')
     def _check_dates(self):
+
         if any(self.filtered(lambda payslip: payslip.date_from > payslip.date_to)):
             raise ValidationError(_("Payslip 'Date From' must be earlier 'Date To'."))
 
     def action_payslip_draft(self):
+
         return self.write({'state': 'draft'})
 
     def action_payslip_done(self):
+
         self.compute_sheet()
         return self.write({'state': 'done'})
 
     def action_payslip_cancel(self):
+
         if self.filtered(lambda slip: slip.state == 'done'):
             raise UserError(_("Cannot cancel a payslip that is done."))
         return self.write({'state': 'cancel'})
 
     def refund_sheet(self):
         for payslip in self:
+
             copied_payslip = payslip.copy({'credit_note': True, 'name': _('Refund: ') + payslip.name})
             copied_payslip.compute_sheet()
             copied_payslip.action_payslip_done()
@@ -123,9 +128,11 @@ class HrPayslip(models.Model):
         }
 
     def check_done(self):
+
         return True
 
     def unlink(self):
+
         if any(self.filtered(lambda payslip: payslip.state not in ('draft', 'cancel'))):
             raise UserError(_('You cannot delete a payslip which is not draft or cancelled!'))
         return super(HrPayslip, self).unlink()
@@ -133,6 +140,7 @@ class HrPayslip(models.Model):
     # TODO move this function into hr_contract module, on hr.employee object
     @api.model
     def get_contract(self, employee, date_from, date_to):
+
         """
         @param employee: recordset of employee
         @param date_from: date field
@@ -150,6 +158,7 @@ class HrPayslip(models.Model):
         return self.env['hr.contract'].search(clause_final).ids
 
     def compute_sheet(self):
+
         for payslip in self:
             number = payslip.number or self.env['ir.sequence'].next_by_code('salary.slip')
             # delete old payslip lines
@@ -164,6 +173,7 @@ class HrPayslip(models.Model):
 
     @api.model
     def get_worked_day_lines(self, contracts, date_from, date_to):
+
         """
         @param contract: Browse record of contracts
         @return: returns a list of dict containing the input that should be applied for the given contract between date_from and date_to
@@ -217,6 +227,7 @@ class HrPayslip(models.Model):
 
     @api.model
     def get_inputs(self, contracts, date_from, date_to):
+
         res = []
 
         structure_ids = contracts.get_all_structures()
@@ -236,6 +247,7 @@ class HrPayslip(models.Model):
 
     @api.model
     def _get_payslip_lines(self, contract_ids, payslip_id):
+
         def _sum_salary_rule_category(localdict, category, amount):
             if category.parent_id:
                 localdict = _sum_salary_rule_category(localdict, category.parent_id, amount)
@@ -388,6 +400,7 @@ class HrPayslip(models.Model):
     # YTI TODO To rename. This method is not really an onchange, as it is not in any view
     # employee_id and contract_id could be browse records
     def onchange_employee_id(self, date_from, date_to, employee_id=False, contract_id=False):
+
         # defaults
         res = {
             'value': {
@@ -449,6 +462,7 @@ class HrPayslip(models.Model):
     @api.onchange('employee_id', 'date_from', 'date_to')
     def onchange_employee(self):
 
+
         if (not self.employee_id) or (not self.date_from) or (not self.date_to):
             return
 
@@ -491,12 +505,14 @@ class HrPayslip(models.Model):
 
     @api.onchange('contract_id')
     def onchange_contract(self):
+
         if not self.contract_id:
             self.struct_id = False
         self.with_context(contract=True).onchange_employee()
         return
 
     def get_salary_line_total(self, code):
+
         self.ensure_one()
         line = self.line_ids.filtered(lambda line: line.code == code)
         if line:
@@ -522,11 +538,13 @@ class HrPayslipLine(models.Model):
 
     @api.depends('quantity', 'amount', 'rate')
     def _compute_total(self):
+
         for line in self:
             line.total = float(line.quantity) * line.amount * line.rate / 100
 
     @api.model_create_multi
     def create(self, vals_list):
+
         for values in vals_list:
             if 'employee_id' not in values or 'contract_id' not in values:
                 payslip = self.env['hr.payslip'].browse(values.get('slip_id'))

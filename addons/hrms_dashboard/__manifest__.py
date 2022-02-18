@@ -22,16 +22,17 @@
 ###################################################################################
 {
     'name': "Open HRMS - HR Dashboard",
-    'version': '13.0.1.0.0',
+    'version': '14.0.1.0.3',
     'summary': """Open HRMS - HR Dashboard""",
     'description': """Open HRMS - HR Dashboard""",
-    'category': 'Human Resources',
-    'author': 'Cybrosys Techno Solutions',
+    'category': 'Generic Modules/Human Resources',
+    'live_test_url': 'https://www.youtube.com/watch?v=iaCWscnpnkQ&t=11s',
+    'author': 'Cybrosys Techno solutions,Open HRMS',
     'company': 'Cybrosys Techno Solutions',
     'maintainer': 'Cybrosys Techno Solutions',
     'website': "https://www.openhrms.com",
     'depends': ['hr', 'hr_holidays', 'hr_timesheet', 'hr_payroll_community', 'hr_attendance', 'hr_timesheet_attendance',
-                'hr_recruitment', 'hr_resignation', 'event', 'hr_reward_warning'],
+                'hr_recruitment', 'hr_resignation', 'event', 'hr_reward_warning','base'],
     'external_dependencies': {
         'python': ['pandas'],
     },

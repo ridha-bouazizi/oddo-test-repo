@@ -1,5 +1,5 @@
-HR Dashboard v13
-================
+HR Dashboard
+============
 
 Keep your eyes on your whole Human resource analysis.
 
@@ -14,7 +14,7 @@ Tech
 
 Installation
 ============
-- www.odoo.com/documentation/13.0/setup/install.html
+- www.odoo.com/documentation/14.0/setup/install.html
 - Install the dependency package Pandas using the following commands
 
 	* sudo pip3 install pandas
@@ -37,6 +37,8 @@ Author
 ------
 
 Developer: Aswani PC, odoo@cybrosys.com
+    		Version 14: Naveen V @cybrosys, Contact: odoo@cybrosys.com
+
 
 Maintainer
 ----------

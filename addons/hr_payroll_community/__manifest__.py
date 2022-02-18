@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 
 {
-    'name': 'Odoo13 Payroll',
+    'name': 'Odoo14 Payroll',
     'category': 'Generic Modules/Human Resources',
-    'version': '13.0.1.5.3',
+    'version': '14.0.1.0.0',
     'author': 'Odoo SA,Cybrosys Techno Solutions',
     'company': 'Cybrosys Techno Solutions',
     'maintainer': 'Cybrosys Techno Solutions',
     'website': 'https://www.cybrosys.com',
     'summary': 'Manage your employee payroll records',
     'images': ['static/description/banner.gif'],
-    'description': "Odoo 13 Payroll, Payroll, Odoo 13,Odoo Payroll, Odoo Community Payroll",
+    'description': "Odoo 14 Payroll, Payroll, Odoo 14,Odoo Payroll, Odoo Community Payroll",
     'depends': [
         'hr_contract',
         'hr_holidays',
@@ -34,5 +34,4 @@
         'views/report_payslipdetails_templates.xml',
     ],
     'license': 'AGPL-3',
-    # 'demo': ['data/hr_payroll_demo.xml'],
 }

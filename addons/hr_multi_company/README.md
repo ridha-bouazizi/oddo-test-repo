@@ -10,7 +10,7 @@ If you have any question/queries/additional works on OpenHRMS or this module, Yo
 Contacts
 --------
 info - info@cybrosys.com
-Jesni Banu - jesni@cybrosys.in
+Jesni Banu
 
 Website:
 https://www.openhrms.com

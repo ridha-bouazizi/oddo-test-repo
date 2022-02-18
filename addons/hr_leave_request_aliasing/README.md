@@ -19,6 +19,7 @@ Contacts
 --------
 info - info@cybrosys.com
 Jesni Banu - jesni@cybrosys.in
+V14- Naveen V @ cybrosys, odoo@cybrosys.in
 
 Website:
 https://www.openhrms.com

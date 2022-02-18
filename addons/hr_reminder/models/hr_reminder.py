@@ -7,10 +7,10 @@ class HrPopupReminder(models.Model):
     _name = 'hr.reminder'
 
     name = fields.Char(string='Title', required=True)
-    model_name = fields.Many2one('ir.model', help="Choose the model name", string="Model", required=True, domain="[('model', 'like','hr')]")
+    model_name = fields.Many2one('ir.model', help="Choose the model name", string="Model", required=True, ondelete='cascade', domain="[('model', 'like','hr')]")
     model_field = fields.Many2one('ir.model.fields', string='Field', help="Choose the field",
                                   domain="[('model_id', '=',model_name),('ttype', 'in', ['datetime','date'])]",
-                                  required=True)
+                                  required=True, ondelete='cascade')
     search_by = fields.Selection([('today', 'Today'),
                                   ('set_period', 'Set Period'),
                                   ('set_date', 'Set Date'), ],

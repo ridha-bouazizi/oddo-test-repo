@@ -3,8 +3,7 @@
 #    A part of Open HRMS Project <https://www.openhrms.com>
 #
 #    Cybrosys Technologies Pvt. Ltd.
-#    Copyright (C) 2018-TODAY Cybrosys Technologies (<https://www.cybrosys.com>).
-#    Author: Jesni Banu (<https://www.cybrosys.com>)
+#    Copyright (C) 2020-TODAY Cybrosys Technologies (<https://www.cybrosys.com>).
 #
 #    This program is free software: you can modify
 #    it under the terms of the GNU Affero General Public License (AGPL) as
@@ -22,11 +21,11 @@
 ###################################################################################
 {
     'name': 'Open HRMS Multi-Company',
-    'version': '13.0.1.0.0',
+    'version': '14.0.1.0.0',
     'summary': """Enables Multi-Company""",
     'description': 'This module enables multi company features',
     'category': 'Generic Modules/Human Resources',
-    'author': 'Cybrosys Techno Solutions',
+    'author': 'Cybrosys Techno solutions,Open HRMS',
     'company': 'Cybrosys Techno Solutions',
     'website': "https://www.openhrms.com",
     'depends': ['base', 'hr','hr_contract', 'hr_payroll_community', 'hr_expense', 'hr_attendance', 'hr_employee_transfer'],
@@ -34,8 +33,7 @@
         'views/hr_company_view.xml',
         'views/multi_company_view.xml',
     ],
-    'demo': [],
-    'images': ['static/description/banner.jpg'],
+    'images': ['static/description/banner.png'],
     'license': 'AGPL-3',
     'installable': True,
     'auto_install': False,

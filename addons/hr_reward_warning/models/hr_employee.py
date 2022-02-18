@@ -70,6 +70,7 @@ class HrAnnouncements(models.Model):
             ann_obj = announcement_ids_general.ids + announcement_ids_emp.ids + announcement_ids_job.ids + announcement_ids_dep.ids
 
             ann_ids = []
+
             for each in ann_obj:
                 ann_ids.append(each)
             view_id = self.env.ref('hr_reward_warning.view_hr_announcement_form').id

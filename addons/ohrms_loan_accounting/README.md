@@ -26,6 +26,7 @@ Author
 ------
 
 Developers: Anusha P P <anusha@cybrosys.in>
+	V14-Naveen V @cybrosys, Contact: odoo@cybrosys.com
 
 Maintainer
 ----------

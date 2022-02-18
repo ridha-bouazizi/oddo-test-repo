@@ -3,7 +3,7 @@
 #    A part of Open HRMS Project <https://www.openhrms.com>
 #
 #    Cybrosys Technologies Pvt. Ltd.
-#    Copyright (C) 2018-TODAY Cybrosys Technologies (<https://www.cybrosys.com>).
+#    Copyright (C) 2020-TODAY Cybrosys Technologies (<https://www.cybrosys.com>).
 #    Author: Jesni Banu (<https://www.cybrosys.com>)
 #
 #    This program is free software: you can modify
@@ -22,21 +22,20 @@
 ###################################################################################
 {
     'name': 'Open HRMS Leave Request Aliasing',
-    'version': '13.0.1.0.0',
+    'version': '14.0.1.0.0',
     'summary': """Allows You To Create Leave Request Automatically From Incoming Mails""",
     'description': 'This module allows you to create leave request directly from incoming mails.',
+    'live_test_url': 'https://www.youtube.com/watch?v=WZtW0jIk9B4&feature=youtu.be',
     'category': 'Generic Modules/Human Resources',
-    'author': 'Cybrosys Techno Solutions',
+    'author': 'Cybrosys Techno solutions,Open HRMS',
     'company': 'Cybrosys Techno Solutions',
     'website': "https://www.openhrms.com",
     'depends': ['base_setup', 'hr','hr_holidays'],
     'data': [
-        # 'data/web_planner_data.xml',
         'views/hr_leave_template.xml',
         'views/leave_request_alias_view.xml',
         'views/res_config_views.xml',
     ],
-    'demo': [],
     'images': ['static/description/banner.png'],
     'license': 'AGPL-3',
     'installable': True,

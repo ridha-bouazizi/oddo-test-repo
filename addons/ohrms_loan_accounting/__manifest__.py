@@ -3,8 +3,7 @@
 #    A part of Open HRMS Project <https://www.openhrms.com>
 #
 #    Cybrosys Technologies Pvt. Ltd.
-#    Copyright (C) 2018-TODAY Cybrosys Technologies (<https://www.cybrosys.com>).
-#    Author: Anusha P P (<https://www.cybrosys.com>)
+#    Copyright (C) 2020-TODAY Cybrosys Technologies (<https://www.cybrosys.com>).
 #
 #    This program is free software: you can modify
 #    it under the terms of the GNU Affero General Public License (AGPL) as
@@ -22,13 +21,13 @@
 ###################################################################################
 {
     'name': 'Open HRMS Loan Accounting',
-    'version': '13.0.1.0.0',
+    'version': '14.0.1.0.0',
     'summary': 'Open HRMS Loan Accounting',
     'description': """
         Create accounting entries for loan requests.
         """,
     'category': 'Generic Modules/Human Resources',
-    'author': "Cybrosys Techno Solutions",
+    'author': "Cybrosys Techno Solutions,Open HRMS",
     'company': 'Cybrosys Techno Solutions',
     'maintainer': 'Cybrosys Techno Solutions',
     'website': "https://www.openhrms.com",
@@ -39,7 +38,6 @@
         'views/hr_loan_config.xml',
         'views/hr_loan_acc.xml',
     ],
-    'demo': [],
     'images': ['static/description/banner.png'],
     'license': 'AGPL-3',
     'installable': True,

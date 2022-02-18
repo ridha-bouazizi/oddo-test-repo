@@ -63,6 +63,7 @@ class HrLoanAcc(models.Model):
                     'loan_id': loan.id,
                 }
                 vals = {
+                    'name': 'Loan For' + ' ' + loan_name,
                     'narration': loan_name,
                     'ref': reference,
                     'journal_id': journal_id,
@@ -108,6 +109,7 @@ class HrLoanAcc(models.Model):
                 'loan_id': loan.id,
             }
             vals = {
+                'name': 'Loan For' + ' ' + loan_name,
                 'narration': loan_name,
                 'ref': reference,
                 'journal_id': journal_id,
@@ -153,6 +155,7 @@ class HrLoanLineAcc(models.Model):
                 'credit': amount > 0.0 and amount or 0.0,
             }
             vals = {
+                'name': 'Loan For' + ' ' + loan_name,
                 'narration': loan_name,
                 'ref': reference,
                 'journal_id': journal_id,

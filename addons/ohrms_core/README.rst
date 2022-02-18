@@ -1,5 +1,5 @@
-Open HRMS CORE v13
-==================
+Open HRMS CORE
+==============
 * Open HRMS is a one-stop solution to manage human resource pool in a better and efficient format.
 * It is a Open Source Project for empower Odoo HRMS by Cybrosys Technologies.
 * Open HRMS is a set of modules, to empower Odoo HR module.

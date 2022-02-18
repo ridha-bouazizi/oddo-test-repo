@@ -28,7 +28,8 @@ class Settings(models.TransientModel):
         asc_order_menu = self.env['ir.config_parameter'].sudo().get_param('order_menu') or False
         sqno = 1
         if asc_order_menu:
-            menus = self.env['ir.ui.menu'].search([('parent_id', '=', False), ('name', 'not in', ['Apps', 'Settings', 'Dashboard'])], order='name ASC')
+            # menus = self.env['ir.ui.menu'].sudo().search([('parent_id','=', False),('name', 'not in', ['Apps', 'Settings', 'Dashboard'])], order='name ASC')
+            menus = self.env['ir.ui.menu'].sudo().search(['&',('parent_id','=', False),('name','not in',('Apps','Settings','Dashboard'))])
             for menu in menus:
                 if not menu.order_changed:
                     menu.recent_menu_sequence = menu.sequence
@@ -36,7 +37,8 @@ class Settings(models.TransientModel):
                     menu.order_changed = True
                     sqno += 1
         else:
-            menus = self.env['ir.ui.menu'].search([('parent_id', '=', False), ('name', 'not in', ['Apps', 'Settings', 'Dashboard'])])
+            menus = self.env['ir.ui.menu'].search([('parent_id', '=', False), ('name', 'not in', ('Apps', 'Settings', 'Dashboard'))])
+
             for menu in menus:
                 if menu.order_changed:
                     menu.sequence = menu.recent_menu_sequence

@@ -1,16 +1,41 @@
-odoo.define('hrms_dashboard.Dashboard', function (require) {
+odoo.define('hrms_dashboard.DashboardRewrite', function (require) {
 "use strict";
 
+const ActionMenus = require('web.ActionMenus');
+const ComparisonMenu = require('web.ComparisonMenu');
+const ActionModel = require('web/static/src/js/views/action_model.js');
+const FavoriteMenu = require('web.FavoriteMenu');
+const FilterMenu = require('web.FilterMenu');
+const GroupByMenu = require('web.GroupByMenu');
+const patchMixin = require('web.patchMixin');
+const Pager = require('web.Pager');
+const SearchBar = require('web.SearchBar');
+const { useModel } = require('web/static/src/js/model.js');
+
+const { Component, hooks } = owl;
+
+var concurrency = require('web.concurrency');
+var config = require('web.config');
+var field_utils = require('web.field_utils');
+var time = require('web.time');
+var utils = require('web.utils');
 var AbstractAction = require('web.AbstractAction');
 var ajax = require('web.ajax');
+var Dialog = require('web.Dialog');
+var field_utils = require('web.field_utils');
 var core = require('web.core');
 var rpc = require('web.rpc');
 var session = require('web.session');
 var web_client = require('web.web_client');
+var abstractView = require('web.AbstractView');
 var _t = core._t;
 var QWeb = core.qweb;
 
+const { useRef, useSubEnv } = hooks;
+
+
 var HrDashboard = AbstractAction.extend({
+
     template: 'HrDashboardMain',
     cssLibs: [
         '/hrms_dashboard/static/src/css/lib/nv.d3.css'
@@ -18,59 +43,104 @@ var HrDashboard = AbstractAction.extend({
     jsLibs: [
         '/hrms_dashboard/static/src/js/lib/d3.min.js'
     ],
-    events: {
-        'click .login_broad_factor': 'employee_broad_factor',
-        'click .hr_leave_request_approve': 'leaves_to_approve',
-        'click .hr_leave_allocations_approve': 'leave_allocations_to_approve',
-        'click .hr_timesheets': 'hr_timesheets',
-        'click .hr_job_application_approve': 'job_applications_to_approve',
-        'click .hr_payslip':'hr_payslip',
-        'click .hr_contract':'hr_contract',
-        'click .hr_employee':'hr_employee',
-        'click .leaves_request_month':'leaves_request_month',
-        'click .leaves_request_today':'leaves_request_today',
-        "click .o_hr_attendance_sign_in_out_icon": function() {
+
+     events: {
+             'click .hr_payslip':'hr_payslip',
+             'click .hr_leave_request_approve': 'leaves_to_approve',
+             'click .hr_leave_allocations_approve': 'leave_allocations_to_approve',
+             'click .hr_job_application_approve': 'job_applications_to_approve',
+             'click .leaves_request_today':'leaves_request_today',
+             'click .leaves_request_month':'leaves_request_month',
+             'click .hr_payslip':'hr_payslip',
+             'click .hr_contract':'hr_contract',
+             'click .hr_timesheets': 'hr_timesheets',
+             'click .login_broad_factor': 'employee_broad_factor',
+            "click .o_hr_attendance_sign_in_out_icon": function() {
             this.$('.o_hr_attendance_sign_in_out_icon').attr("disabled", "disabled");
             this.update_attendance();
         },
         'click #broad_factor_pdf': 'generate_broad_factor_report',
+
+
     },
 
+
+
     init: function(parent, context) {
+
         this._super(parent, context);
         this.date_range = 'week';  // possible values : 'week', 'month', year'
         this.date_from = moment().subtract(1, 'week');
         this.date_to = moment();
-        this.dashboards_templates = ['LoginEmployeeDetails', 'ManagerDashboard', 'EmployeeDashboard'];
+        this.dashboards_templates = ['LoginEmployeeDetails','ManagerDashboard', 'EmployeeDashboard'];
         this.employee_birthday = [];
         this.upcoming_events = [];
         this.announcements = [];
-    console.log("INIT FUNCTION 1")
+        this.login_employee = [];
+
     },
 
-    willStart: function() {
-        console.log("WILLSTART FUNCTION")
+    willStart: function(){
         var self = this;
-//        return $.when(ajax.loadLibs(this), this._super()).then(function() {console.log("test")
-            return self.fetch_data();
-//        });
-    },
-
-    start: function() {
-        console.log("START FUNCTION")
-        var self = this;
-        this.set("title", 'Dashboard');
-        return this._super().then(function() {
-            self.update_cp();
-            self.render_dashboards();
-            self.render_graphs();
-            self.$el.parent().addClass('oe_background_grey');
+        this.login_employee = {};
+        return this._super()
+        .then(function() {
+            var def0 =  self._rpc({
+                    model: 'hr.employee',
+                    method: 'check_user_group'
+            }).then(function(result) {
+                if (result == true){
+                    self.is_manager = true;
+                }
+                else{
+                    self.is_manager = false;
+                }
+            });
+            var def1 =  self._rpc({
+                    model: 'hr.employee',
+                    method: 'get_user_employee_details'
+            }).then(function(result) {
+                self.login_employee =  result[0];
+            });
+            var def2 = self._rpc({
+                model: "hr.employee",
+                method: "get_upcoming",
+            })
+            .then(function (res) {
+                self.employee_birthday = res['birthday'];
+                self.upcoming_events = res['event'];
+                self.announcements = res['announcement'];
+            });
+        return $.when(def0, def1, def2);
         });
     },
 
+
+    start: function() {
+            console.log("START FUNCTION")
+            var self = this;
+            this.set("title", 'Dashboard');
+            return this._super().then(function() {
+                self.update_cp();
+                self.render_dashboards();
+                self.render_graphs();
+                self.$el.parent().addClass('oe_background_grey');
+            });
+        },
+
     fetch_data: function() {
-        console.log("FETCH_DATE FUNCTION")
         var self = this;
+        var def0 =  self._rpc({
+                model: 'hr.employee',
+                method: 'check_user_group'
+        }).then(function(result) {
+            if (result == true){
+                self.is_manager = true;
+            }
+            else{
+                self.is_manager = false;
+            }
+        });
         var def1 =  this._rpc({
                 model: 'hr.employee',
                 method: 'get_user_employee_details'
@@ -86,18 +156,22 @@ var HrDashboard = AbstractAction.extend({
             self.upcoming_events = res['event'];
             self.announcements = res['announcement'];
         });
-        return $.when(def1, def2);
+        return $.when(def0, def1, def2);
     },
 
-    render_dashboards: function() {console.log("RENDER_DASHBOARD")
+
+    render_dashboards: function() {
         var self = this;
         if (this.login_employee){
-            _.each(this.dashboards_templates, function(template) {
+            var templates = []
+            if( self.is_manager == true){templates = ['LoginEmployeeDetails','ManagerDashboard', 'EmployeeDashboard'];}
+            else{ templates = ['LoginEmployeeDetails', 'EmployeeDashboard'];}
+            _.each(templates, function(template) {
                 self.$('.o_hr_dashboard').append(QWeb.render(template, {widget: self}));
             });
-            }
+        }
         else{
-            self.$('.o_hr_dashboard').append(QWeb.render('EmployeeWarning', {widget: self}));
+                self.$('.o_hr_dashboard').append(QWeb.render('EmployeeWarning', {widget: self}));
             }
     },
 
@@ -125,14 +199,10 @@ var HrDashboard = AbstractAction.extend({
 
     update_cp: function() {
         var self = this;
-        console.log("UPDATE_CP")
-//        this.update_control_panel(
-//            {breadcrumbs: self.breadcrumbs}, {clear: true}
-//        );
     },
 
     get_emp_image_url: function(employee){
-        return window.location.origin + '/web/image?model=hr.employee&field=image&id='+employee;
+        return window.location.origin + '/web/image?model=hr.employee&field=image_1920&id='+employee;
     },
 
     update_attendance: function () {
@@ -165,58 +235,154 @@ var HrDashboard = AbstractAction.extend({
 
     },
 
-    hr_payslip: function(e){
+     //events
+
+        hr_payslip: function(ev){
+            var self = this;
+            ev.stopPropagation();
+            ev.preventDefault();
+//            var $action = $(ev.currentTarget);
+            console.log('entered function hr payslip')
+
+            var options = {
+                on_reverse_breadcrumb: this.on_reverse_breadcrumb,
+            };
+
+            this.do_action({
+                name: _t("Employee Payslips"),
+                type: 'ir.actions.act_window',
+                res_model: 'hr.payslip',
+                view_mode: 'tree,form,calendar',
+                views: [[false, 'list'],[false, 'form']],
+                domain: [['employee_id','=', this.login_employee.id]],
+                target: 'current' //self on some of them
+            }, {
+                    on_reverse_breadcrumb: this.on_reverse_breadcrumb
+            });
+        },
+
+        leaves_to_approve: function(e) {
+        console.log("leaves_to_approve")
+        var self = this;
+        e.stopPropagation();
+        e.preventDefault();
+
+        var options = {
+            on_reverse_breadcrumb: this.on_reverse_breadcrumb,
+        };
+        this.do_action({
+            name: _t("Leave Request"),
+            type: 'ir.actions.act_window',
+            res_model: 'hr.leave',
+            view_mode: 'tree,form,calendar',
+            views: [[false, 'list'],[false, 'form']],
+            domain: [['state','in',['confirm','validate1']]],
+            target: 'current'
+        }, options)
+    },
+
+    //employee broad factor
+
+     employee_broad_factor: function(e) {
+
         var self = this;
         e.stopPropagation();
         e.preventDefault();
         var options = {
             on_reverse_breadcrumb: this.on_reverse_breadcrumb,
         };
+        var today = new Date();
+
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = today.getFullYear();
+
+//        today = mm + '/' + dd + '/' + yyyy;
+
         this.do_action({
-            name: _t("Employee Payslips"),
+            name: _t("Leave Request"),
             type: 'ir.actions.act_window',
-            res_model: 'hr.payslip',
+            res_model: 'hr.leave',
             view_mode: 'tree,form,calendar',
             views: [[false, 'list'],[false, 'form']],
+            domain: [['state','in',['validate']],['employee_id','=', this.login_employee.id],['date_to','<=',today]],
+            target: 'current',
+            context:{'order':'duration_display'}
+        }, options)
+
+    },
+
+    //hr timesheets
+
+    hr_timesheets: function(e) {
+         var self = this;
+        e.stopPropagation();
+        e.preventDefault();
+        var options = {
+            on_reverse_breadcrumb: this.on_reverse_breadcrumb,
+        };
+        this.do_action({
+            name: _t("Timesheets"),
+            type: 'ir.actions.act_window',
+            res_model: 'account.analytic.line',
+            view_mode: 'tree,form',
+            views: [[false, 'list'], [false, 'form']],
+            context: {
+                'search_default_month': true,
+            },
             domain: [['employee_id','=', this.login_employee.id]],
             target: 'current'
         }, options)
-        // this.do_action({
-        //     name: _t("Employee"),
-        //     type: 'ir.actions.act_window',
-        //     res_model: 'hr.employee',
-        //     view_mode: 'form',
-        //     view_type: 'form',
-        //     views: [[false, 'form']],
-        //     res_id: this.login_employee.id,
-        //     target: 'current'
-        // }, options)
     },
+
+    //Contracts
 
     hr_contract: function(e){
+            var self = this;
+            e.stopPropagation();
+            e.preventDefault();
+            session.user_has_group('hr.group_hr_manager').then(function(has_group){
+                if(has_group){
+                    var options = {
+                        on_reverse_breadcrumb: self.on_reverse_breadcrumb,
+                    };
+                    self.do_action({
+                        name: _t("Contracts"),
+                        type: 'ir.actions.act_window',
+                        res_model: 'hr.contract',
+                        view_mode: 'tree,form,calendar',
+                        views: [[false, 'list'],[false, 'form']],
+                        context: {
+                            'search_default_employee_id': self.login_employee.id,
+                        },
+                        target: 'current'
+                    })
+                }
+            });
+
+        },
+
+    //leave request today
+    leaves_request_today: function(e) {
         var self = this;
+        var date = new Date();
         e.stopPropagation();
         e.preventDefault();
-        session.user_has_group('hr.group_hr_user').then(function(has_group){
-            if(has_group){
-                var options = {
-                    on_reverse_breadcrumb: self.on_reverse_breadcrumb,
-                };
-                self.do_action({
-                    name: _t("Contracts"),
-                    type: 'ir.actions.act_window',
-                    res_model: 'hr.contract',
-                    view_mode: 'tree,form,calendar',
-                    views: [[false, 'list'],[false, 'form']],
-                    context: {
-                        'search_default_employee_id': self.login_employee.id,
-                    },
-                    target: 'current'
-                }, options)
-            }
-        });
-
+        var options = {
+            on_reverse_breadcrumb: this.on_reverse_breadcrumb,
+        };
+        this.do_action({
+            name: _t("Leaves Today"),
+            type: 'ir.actions.act_window',
+            res_model: 'hr.leave',
+            view_mode: 'tree,form,calendar',
+            views: [[false, 'list'],[false, 'form']],
+            domain: [['date_from','<=', date], ['date_to', '>=', date], ['state','=','validate']],
+            target: 'current'
+        }, options)
     },
+
+    //leave requests this month
 
     leaves_request_month: function(e) {
         var self = this;
@@ -241,68 +407,6 @@ var HrDashboard = AbstractAction.extend({
         }, options)
     },
 
-    leaves_request_today: function(e) {
-        var self = this;
-        var date = new Date();
-        e.stopPropagation();
-        e.preventDefault();
-        var options = {
-            on_reverse_breadcrumb: this.on_reverse_breadcrumb,
-        };
-        this.do_action({
-            name: _t("Leaves Today"),
-            type: 'ir.actions.act_window',
-            res_model: 'hr.leave',
-            view_mode: 'tree,form,calendar',
-            views: [[false, 'list'],[false, 'form']],
-            domain: [['date_from','<=', date], ['date_to', '>=', date], ['state','=','validate']],
-            target: 'current'
-        }, options)
-    },
-    employee_broad_factor: function(e) {
-        console.log("broad_factor")
-        var self = this;
-        e.stopPropagation();
-        e.preventDefault();
-        var options = {
-            on_reverse_breadcrumb: this.on_reverse_breadcrumb,
-        };
-        var today = new Date();
-        var dd = String(today.getDate()).padStart(2, '0');
-        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-        var yyyy = today.getFullYear();
-
-        today = mm + '/' + dd + '/' + yyyy;
-        console.log(this,"loploploplop");
-        this.do_action({
-            name: _t("Leave Request"),
-            type: 'ir.actions.act_window',
-            res_model: 'hr.leave',
-            view_mode: 'tree,form,calendar',
-            views: [[false, 'list'],[false, 'form']],
-            domain: [['state','in',['validate']],['employee_id','=', this.login_employee.id],['date_to','<=',today]],
-            target: 'current',
-            context:{'order':'duration_display'}
-        }, options)
-    },
-    leaves_to_approve: function(e) {
-        console.log("leaves_to_approve")
-        var self = this;
-        e.stopPropagation();
-        e.preventDefault();
-        var options = {
-            on_reverse_breadcrumb: this.on_reverse_breadcrumb,
-        };
-        this.do_action({
-            name: _t("Leave Request"),
-            type: 'ir.actions.act_window',
-            res_model: 'hr.leave',
-            view_mode: 'tree,form,calendar',
-            views: [[false, 'list'],[false, 'form']],
-            domain: [['state','in',['confirm','validate1']]],
-            target: 'current'
-        }, options)
-    },
     leave_allocations_to_approve: function(e) {
         var self = this;
         e.stopPropagation();
@@ -317,27 +421,6 @@ var HrDashboard = AbstractAction.extend({
             view_mode: 'tree,form,calendar',
             views: [[false, 'list'],[false, 'form']],
             domain: [['state','in',['confirm', 'validate1']]],
-            target: 'current'
-        }, options)
-    },
-
-    hr_timesheets: function(e) {
-         var self = this;
-        e.stopPropagation();
-        e.preventDefault();
-        var options = {
-            on_reverse_breadcrumb: this.on_reverse_breadcrumb,
-        };
-        this.do_action({
-            name: _t("Timesheets"),
-            type: 'ir.actions.act_window',
-            res_model: 'account.analytic.line',
-            view_mode: 'tree,form',
-            views: [[false, 'list'], [false, 'form']],
-            context: {
-                'search_default_month': true,
-            },
-            domain: [['employee_id','=', this.login_employee.id]],
             target: 'current'
         }, options)
     },
@@ -360,6 +443,9 @@ var HrDashboard = AbstractAction.extend({
             target: 'current'
         }, options)
     },
+
+    //End Events
+
 
     render_department_employee:function(){
         var self = this;
@@ -917,10 +1003,10 @@ var HrDashboard = AbstractAction.extend({
         });
     },
 
-});
 
+   });
 
-core.action_registry.add('hr_dashboard', HrDashboard);
+    core.action_registry.add('hr_dashboard', HrDashboard);
 
 return HrDashboard;
 

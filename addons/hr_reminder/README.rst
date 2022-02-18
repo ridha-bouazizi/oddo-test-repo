@@ -1,4 +1,4 @@
-Open HRMS Reminders Todo V13
+Open HRMS Reminders Todo V14
 ============================
 
 HR Reminder For OHRMS
@@ -14,7 +14,7 @@ Tech
 
 Installation
 ============
-- www.odoo.com/documentation/13.0/setup/install.html
+- www.odoo.com/documentation/14.0/setup/install.html
 - Install our custom addon
 
 
@@ -29,7 +29,8 @@ Credits
 Author
 ------
 
-Developer: Treesa Maria Jude @ cybrosys, treesa@cybrosys.in
+Developer: Treesa Maria Jude @ cybrosys
+	V14 - Naveen V @ cybrosys, odoo@cybrosys.in
 
 Maintainer
 ----------

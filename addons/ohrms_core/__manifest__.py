@@ -3,7 +3,7 @@
 #    A part of Open HRMS Project <https://www.openhrms.com>
 #
 #    Cybrosys Technologies Pvt. Ltd.
-#    Copyright (C) 2018-TODAY Cybrosys Technologies (<https://www.cybrosys.com>).
+#    Copyright (C) 2020-TODAY Cybrosys Technologies (<https://www.cybrosys.com>).
 #    Author: Cybrosys (<https://www.cybrosys.com>)
 #
 #    This program is free software: you can modify
@@ -22,15 +22,15 @@
 ###################################################################################
 {
     'name': 'Open HRMS Core',
-    'version': '13.0.1.2.1',
+    'version': '14.0.1.0.0',
     'summary': """Open HRMS Suit: It brings all Open HRMS modules""",
-    'description': """Main module of Open HRMS, It brings all others into a single module, Payroll, Payroll Accounting,Expense,
+    'description': """Openhrms, Main module of Open HRMS, It brings all others into a single module, Payroll, Payroll Accounting,Expense,
                 Dashboard, Employees, Employee Document, Resignation, Salary Advance, Loan Management, Gratuity, Service Request, Gosi, WPS Report, Reminder, Multi Company, Shift Management, Employee History,
-                Branch Transfer, Employee Appraisal,Biometric Device, Announcements, Insurance Management, Vacation Management,Employee Appreciations, Asset Custody, Employee Checklist, Entry and Exit Checklist, Disciplinary Actions, Attrition Rate, Document Expiry, Visa Expiry, Law Suit Management, Employee, Employee Training""",
+                Branch Transfer, Employee Appraisal,Biometric Device, Announcements, Insurance Management, Vacation Management,Employee Appreciations, Asset Custody, Employee Checklist, Entry and Exit Checklist, Disciplinary Actions, openhrms, OpenHRMS, hrms, Attrition Rate, Document Expiry, Visa Expiry, Law Suit Management, Employee, Employee Training""",
     'category': 'Generic Modules/Human Resources',
-    'author': 'Cybrosys Techno Solutions',
+    'author': 'Cybrosys Techno solutions',
     'company': 'Cybrosys Techno Solutions',
-    'live_test_url': 'http://demo.openhrms.com/web/signup',
+    'live_test_url': 'https://bit.ly/3vXgU6D',
     'website': "https://www.openhrms.com",
     'depends': ['web',
                 'hr',
@@ -59,7 +59,6 @@
         'views/template_view.xml',
         'views/menu_item_form_inherit_view.xml',
     ],
-    'demo': [],
     'images': ['static/description/banner.gif'],
     'qweb': [
             'static/src/xml/link_view.xml',

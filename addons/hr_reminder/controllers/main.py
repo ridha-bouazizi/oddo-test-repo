@@ -12,7 +12,20 @@ class Reminders(http.Controller):
         for i in request.env['hr.reminder'].search([]):
             if i.reminder_active:
                 reminder.append(i.name)
+            print('reminder',reminder)
         return reminder
+        # reminder_dict = {}
+        # reminder_list = []
+        # for i in request.env['hr.reminder'].search([]):
+        #     count = 1
+        #     if i.reminder_active:
+        #         reminder_dict[str(count)] = i.name
+        #         reminder_list.append({str(count):i.name})
+        #         count += 1
+        #     print('reminder',reminder_dict)
+        # return reminder_dict
+        # return reminder_dict,reminder_list
+
 
     @http.route('/hr_reminder/reminder_active', type='json', auth="public")
     def reminder_active(self, **kwargs):

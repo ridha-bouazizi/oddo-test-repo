@@ -146,7 +146,7 @@
             <field name="inherit_id" ref="hr.view_employee_form"/>
             <field name="arch" type="xml">
                 <div class="oe_button_box" position="inside">
-                    <button class="oe_stat_button" name="announcement_view" type="object" icon="fa-bullhorn">
+                    <button class="oe_stat_button" name="announcement_view" type="object" icon="fa-bullhorn" attrs="{'invisible':[('announcement_count','=', 0)]}">
                         <field string="Announcements" name="announcement_count" widget="statinfo"/>
                     </button>
                 </div>

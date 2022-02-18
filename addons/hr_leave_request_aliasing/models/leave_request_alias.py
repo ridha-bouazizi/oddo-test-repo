@@ -27,23 +27,31 @@ class HrLeaveAlias(models.Model):
                 cleaner = re.compile('<.*?>')
                 clean_msg_body = re.sub(cleaner, '', msg_body)
                 date_list = re.findall(r'\d{2}/\d{2}/\d{4}', clean_msg_body)
+                print('date_list',date_list)
                 if len(date_list) > 0:
                     date_from = date_list[0]
-                    if len(date_list) > 1:
-                        start_date = datetime.strptime(date_list[1], '%d/%m/%Y')
-                        date_to = start_date + timedelta(days=0)
+                    # if len(date_list) > 1:
+                    if len(date_list) == 1:
+                        start_date = datetime.strptime(date_list[0], '%d/%m/%Y')
+                        date_to = start_date
+                        print('date_to',date_to)
+                        # no_of_days_temp = 1
                     else:
                         start_date = datetime.strptime(date_list[0], '%d/%m/%Y')
-                        date_to = start_date + timedelta(days=1)
-                    no_of_days_temp = (datetime.strptime(str(date_to), "%Y-%m-%d %H:%M:%S") -
-                                       datetime.strptime(date_from, '%d/%m/%Y')).days
+                        # start_date = start_date + timedelta(days=1)
+                        date_to = datetime.strptime(date_list[1], '%d/%m/%Y')
+
+                    no_of_days_temp = (datetime.strptime(str(date_to), "%Y-%m-%d %H:%M:%S") - datetime.strptime(
+                                        str(start_date), '%Y-%m-%d %H:%M:%S')).days
+
+                    no_of_days_temp += 1
                     custom_values.update({
                         'name': msg_subject.strip(),
                         'employee_id': employee.id,
                         'holiday_status_id': 1,
-                        'date_from': date_from,
-                        'date_to': date_to,
-                        'no_of_days_temp': no_of_days_temp
+                        'request_date_from': start_date,
+                        'request_date_to': date_to,
+                        'number_of_days': no_of_days_temp
                     })
             return super(HrLeaveAlias, self).message_new(msg_dict, custom_values)
         except:

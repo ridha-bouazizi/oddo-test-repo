@@ -1,4 +1,4 @@
-Open HRMS Employee Transfer v13
+Open HRMS Employee Transfer v14
 ===============================
 
 Employee transfer between branches.
@@ -29,7 +29,7 @@ Credits
 Author
 ------
 
-Developer: Sreejith P @ cybrosys, sreejith@cybrosys.in
+Developer: Sreejith P @ cybrosys,
 
 Maintainer
 ----------
