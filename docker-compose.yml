@@ -1,7 +1,7 @@
 version: '3.1'
 services:
   web:
-    image: r08041994b/odoo:2.2
+    image: r08041994b/odoo:2.3
     depends_on:
       - db
     ports:
