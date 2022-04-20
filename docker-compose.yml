@@ -10,7 +10,11 @@ services:
     ports:
       - "8069:8069"
     labels:
-      - "traefik.http.routers.whoami.rule=Host(`odoo.ridha-bouazizi.live`)"
+      - "traefik.http.routers.odoo.rule=Host(`odoo.ridha-bouazizi.live`)"
+      - "traefik.http.routers.odoo.middlewares=auth"
+      - "traefik.http.middlewares.auth.basicauth.usersfile=/tmp/basic-auth-users"
+      - "traefik.http.routers.odoo.tls.certresolver=le"
+      - "traefik.http.routers.odoo.entrypoints=websecure"
     volumes:
       - ./addons:/mnt/extra-addons
       - ./config:/etc/odoo
@@ -24,24 +28,47 @@ services:
       - POSTGRES_PASSWORD=odoo
       - POSTGRES_USER=odoo
       - odoo-db-data:/var/lib/postgresql/data/pgdata
-  reverse-proxy:
+  traefik:
       # The official v2 Traefik docker image
-      image: traefik:v2.6
+    image: traefik:v2.6
+
       # Enables the web UI and tells Traefik to listen to docker
-      command: --api.insecure=true --providers.docker
-      ports:
+    command: 
+      - --api.insecure=true
+      - --providers.docker
+      - --entrypoints.web.address=:80
+      - --api.dashboard=true
+      - --entrypoints.websecure.address=:443
+      # ...
+      - --certificatesresolvers.le.acme.email=r08041994b@gmail.com
+      - --certificatesresolvers.le.acme.storage=/acme.json
+      - --certificatesresolvers.le.acme.tlschallenge=true
+      # ...
+        #- --certificatesresolvers.leresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
+        #- --certificatesresolvers.leresolver.acme.email=r08041994b@gmail.com
+        #- --certificatesresolvers.leresolver.acme.storage=/acme.json
+        #- --certificatesresolvers.leresolver.acme.tlschallenge=true
+      
+    ports:
+      # The HTTPS port
+      - "443:443"
       # The HTTP port
-        - "80:80"
+      - "80:80"
       # The Web UI (enabled by --api.insecure=true)
-        - "8081:8080"
-      volumes:
+      - "8081:8080"
+      
+    volumes:
       # So that Traefik can listen to the Docker events
-        - /var/run/docker.sock:/var/run/docker.sock
-          #  certbot:
-          #image: certbot/certbot:latest
-          #volumes:
-          #- ./certbot/www/:/var/www/certbot/:rw
-          #- ./certbot/conf/:/etc/letsencrypt/:rw
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./tmp:/tmp
+    labels:
+      - "traefik.http.routers.traefik.rule=Host(`traefik.ridha-bouazizi.live`)"
+      - "traefik.http.services.traefik.loadbalancer.server.port=8081"
+  #certbot:
+    #image: certbot/certbot:latest
+    #volumes:
+      #- ./certbot/www/:/var/www/certbot/:rw
+      #- ./certbot/conf/:/etc/letsencrypt/:rw
 volumes:
   odoo-db-data:
   odoo-web-data:
